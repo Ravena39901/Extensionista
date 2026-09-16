@@ -1,0 +1,19 @@
+[
+  {
+    "codigoViagem": "PRO-001",
+    "origem": {
+      "cidade": "Maceió",
+      "uf": "AL"
+    },
+    "destino": {
+      "cidade": "Recife",
+      "uf": "PE"
+    },
+    "dataHoraSaida": "2026-10-15T08:00:00",
+    "dataHoraChegada": "2026-10-15T12:00:00",
+    "duracaoMinutos": 240,
+    "preco": "89.90",
+    "categoria": "CONV",
+    "assentosDisponiveis": 20
+  }
+]
