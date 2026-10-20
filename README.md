@@ -1,86 +1,121 @@
-# Caatinga.AI - Sprint 1
+# 👗 Smart Fashion Inventory Management System
 
-**Disciplina:** Inteligência Artificial — Prof. Ronierison Maciel — UniRios — 2026.2
+A modern, feature-rich fashion inventory management dashboard built with Django and Bootstrap 5. Manage products, categories, suppliers, and stock with beautiful charts and a responsive dark-themed UI.
 
-**Dupla:**
-- Miguel Gomes de Lima — matrícula 241.14.028
-- Lucas Gomes Santos — matrícula 241.14.074
+---
 
-**Matrícula usada como semente:** `24114028` (integrante mais velho da dupla)
+## ✨ Features
 
-## O que este projeto faz
+- **Dashboard** — Real-time stats, Chart.js charts (category distribution, stock status, monthly activity, top products)
+- **Product Management** — Full CRUD with search, filter by category/stock status, pagination, image upload
+- **Category Management** — Create and manage fashion categories (Clothes, Beauty, Accessories, Footwear, Sportswear)
+- **Supplier Management** — Track suppliers with contact info and product count
+- **Inventory Management** — Stock in/out with validation, stock history logs, low-stock alerts
+- **Reports** — Summary statistics and visual charts
+- **Settings** — System configuration overview
+- **Dummy Data** — One-command generation of 50+ products, 10 suppliers, 5 categories, 80 stock logs
 
-O Caatinga.AI é um agente que planeja rotas em um pomar de manga de 12×12
-talhões, comparando estratégias de busca cega (BFS, DFS, UCS) e informada
-(A* com três heurísticas). Além disso, o projeto modela a escolha de quais
-talhões inspecionar sob restrição de bateria (busca local), um mini sistema
-especialista para decisão de manejo (encadeamento para trás) e o cálculo
-bayesiano de confiabilidade do sensor óptico de pragas.
+---
 
-## Como rodar
+## 🛠 Tech Stack
 
+| Layer     | Technology              |
+|-----------|-------------------------|
+| Backend   | Django 5.2              |
+| Database  | SQLite                  |
+| Frontend  | HTML5, CSS3, JavaScript |
+| UI        | Bootstrap 5             |
+| Charts    | Chart.js 4              |
+| Icons     | Font Awesome 6          |
+| Font      | Inter (Google Fonts)    |
+
+---
+
+## 🚀 Setup Instructions
+
+### 1. Prerequisites
 - Python 3.10+
-- Instalação:
-  ```bash
-  pip install -r requirements.txt
-  ```
-- Execução (gera `resultados/pomar.txt`, `resultados/resultados.csv` e
-  `resultados/grafico.png` do zero):
-  ```bash
-  python src/main.py 24114028
-  ```
-- Demais partes, individualmente:
-  ```bash
-  python src/busca_local.py 24114028     # Parte 3.4 (subida de encosta / têmpera simulada)
-  python src/especialista.py             # Parte 4.1/4.2 (sistema especialista)
-  python src/bayes.py 24114028           # Parte 4.3 (Bayes)
-  python src/bonus_dfs.py                # Bônus Liga de IA (contraexemplo DFS)
-  ```
+- pip
 
-## Tabela-resumo dos resultados (matrícula 24114028)
+### 2. Install Django
+```bash
+pip install django pillow
+```
 
-| Estratégia    | Heurística       | Custo | Passos | Nós expandidos | Fronteira máx. | Ótima em custo? |
-|---------------|------------------|------:|-------:|----------------:|----------------:|:----------------:|
-| BFS           | —                |    46 |     22 |             119 |              13 | Não |
-| DFS           | —                |    75 |     42 |              48 |              34 | Não |
-| UCS           | —                |    36 |     24 |             116 |              12 | Sim |
-| A*            | h1 = 0           |    36 |     24 |             116 |              12 | Sim |
-| A*            | h2 = Manhattan   |    36 |     24 |              75 |              20 | Sim |
-| A*            | h3 = 4×Manhattan |    40 |     22 |              25 |              16 | Não (h3 não é admissível) |
+### 3. Navigate to the project
+```bash
+cd fashion_inventory_system
+```
 
-Detalhes, provas e discussão de cada número estão em [`RELATORIO.md`](RELATORIO.md).
+### 4. Run Migrations
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
 
-## Ordem de expansão dos vizinhos
+### 5. Generate Dummy Data
+```bash
+python manage.py generate_dummy_data
+```
 
-Norte, Sul, Oeste, Leste (`N, S, O, L`) — fixa em todas as estratégias
-(ver `src/buscas.py`, lista `VIZINHOS`).
+### 6. Create Superuser (optional, for Django admin)
+```bash
+python manage.py createsuperuser
+```
 
-O A* implementado **não reabre nós** (usa conjunto de fechados clássico).
-Isso é seguro para h1 e h2, que são consistentes; para h3 (não admissível),
-a busca não trava, mas pode devolver rota sub-ótima — é exatamente o que a
-Parte 3.3 do relatório discute.
+### 7. Run Development Server
+```bash
+python manage.py runserver
+```
 
-## Mapa do repositório
+### 8. Open in browser
+```
+http://127.0.0.1:8000/
+```
 
-| Arquivo | O que resolve |
-|---|---|
-| `src/gerador_pomar.py` | Gerador do pomar e dos parâmetros do sensor (intacto, não alterado) |
-| `src/buscas.py` | BFS, DFS, UCS e A* com os quatro contadores instrumentados |
-| `src/busca_local.py` | Subida de encosta e têmpera simulada para escolha de K talhões (Parte 3.4) |
-| `src/especialista.py` | Sistema especialista com encadeamento para trás (Parte 4.1/4.2) |
-| `src/bayes.py` | Cálculos bayesianos de confiabilidade do sensor (Parte 4.3) |
-| `src/bonus_dfs.py` | Contraexemplo construído (Liga de IA — bônus) |
-| `src/main.py` | Comando único: gera `pomar.txt`, `resultados.csv` e `grafico.png` |
-| `RELATORIO.md` | Relatório completo com todas as tabelas e discussões (Partes 1 a 5) |
-| `ANEXO_IA.md` | Anexo obrigatório de uso de IA (Parte 6) |
+---
 
-## Limitações conhecidas
+## 📁 Project Structure
 
-- A busca local (Parte 3.4) usa uma função-objetivo definida pela dupla
-  (risco por tipo de terreno menos custo de deslocamento aproximado por
-  tour guloso) — não há "gabarito" único para essa modelagem; a escolha
-  está justificada em `RELATORIO.md`.
-- O teste de escalabilidade (Parte 2.4) foi feito neste ambiente de
-  desenvolvimento; o ponto de falha exato (n em que ocorre) pode variar
-  alguns milhares de talhões conforme a máquina usada na correção,
-  porque depende da memória RAM disponível.
+```
+fashion_inventory_system/
+├── manage.py
+├── config/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── apps/
+│   ├── dashboard/       # Dashboard views & chart APIs
+│   ├── products/        # Product CRUD + dummy data command
+│   ├── categories/      # Category CRUD
+│   ├── suppliers/       # Supplier CRUD
+│   └── inventory/       # Stock management, reports, settings
+├── templates/
+│   ├── base.html
+│   ├── dashboard/
+│   ├── products/
+│   ├── categories/
+│   ├── suppliers/
+│   └── inventory/
+├── static/
+│   ├── css/style.css
+│   └── js/main.js
+└── media/               # Uploaded product images
+```
+
+---
+
+## 📊 Dashboard
+
+The dashboard displays:
+- **6 stat cards** — Total Products, Categories, Suppliers, Low Stock, Out of Stock, Stock Value
+- **4 charts** — Products by Category (doughnut), Stock Distribution (pie), Monthly Activity (bar), Top Products (horizontal bar)
+- **Recent tables** — Newly added products, recent stock updates, low stock alerts
+
+---
+
+## 📝 License
+
+This project is for educational and demonstration purposes.
+"# Smart-IMS-" 
+"# fashion-inventory-system-prpject" 
