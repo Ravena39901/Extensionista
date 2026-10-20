@@ -1,118 +1,86 @@
-# API de Normalização de Viagens
+# Caatinga.AI - Sprint 1
 
-API desenvolvida com **FastAPI** para identificar e normalizar diferentes formatos de viagens de empresas de transporte.
+**Disciplina:** Inteligência Artificial — Prof. Ronierison Maciel — UniRios — 2026.2
 
-## Tecnologias
+**Dupla:**
+- Miguel Gomes de Lima — matrícula 241.14.028
+- Lucas Gomes Santos — matrícula 241.14.074
 
-* Python 3.13
-* FastAPI
-* Pytest
-* Uvicorn
-* Pydantic
+**Matrícula usada como semente:** `24114028` (integrante mais velho da dupla)
 
-## Instalação
+## O que este projeto faz
 
-```powershell
-py -3.13 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
+O Caatinga.AI é um agente que planeja rotas em um pomar de manga de 12×12
+talhões, comparando estratégias de busca cega (BFS, DFS, UCS) e informada
+(A* com três heurísticas). Além disso, o projeto modela a escolha de quais
+talhões inspecionar sob restrição de bateria (busca local), um mini sistema
+especialista para decisão de manejo (encadeamento para trás) e o cálculo
+bayesiano de confiabilidade do sensor óptico de pragas.
 
-## Execução
+## Como rodar
 
-```powershell
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
-```
+- Python 3.10+
+- Instalação:
+  ```bash
+  pip install -r requirements.txt
+  ```
+- Execução (gera `resultados/pomar.txt`, `resultados/resultados.csv` e
+  `resultados/grafico.png` do zero):
+  ```bash
+  python src/main.py 24114028
+  ```
+- Demais partes, individualmente:
+  ```bash
+  python src/busca_local.py 24114028     # Parte 3.4 (subida de encosta / têmpera simulada)
+  python src/especialista.py             # Parte 4.1/4.2 (sistema especialista)
+  python src/bayes.py 24114028           # Parte 4.3 (Bayes)
+  python src/bonus_dfs.py                # Bônus Liga de IA (contraexemplo DFS)
+  ```
 
-Documentação:
+## Tabela-resumo dos resultados (matrícula 24114028)
 
-```text
-http://127.0.0.1:8000/docs
-```
+| Estratégia    | Heurística       | Custo | Passos | Nós expandidos | Fronteira máx. | Ótima em custo? |
+|---------------|------------------|------:|-------:|----------------:|----------------:|:----------------:|
+| BFS           | —                |    46 |     22 |             119 |              13 | Não |
+| DFS           | —                |    75 |     42 |              48 |              34 | Não |
+| UCS           | —                |    36 |     24 |             116 |              12 | Sim |
+| A*            | h1 = 0           |    36 |     24 |             116 |              12 | Sim |
+| A*            | h2 = Manhattan   |    36 |     24 |              75 |              20 | Sim |
+| A*            | h3 = 4×Manhattan |    40 |     22 |              25 |              16 | Não (h3 não é admissível) |
 
-## API
+Detalhes, provas e discussão de cada número estão em [`RELATORIO.md`](RELATORIO.md).
 
-**POST**
+## Ordem de expansão dos vizinhos
 
-```text
-/api/v1/viagens/normalizar
-```
+Norte, Sul, Oeste, Leste (`N, S, O, L`) — fixa em todas as estratégias
+(ver `src/buscas.py`, lista `VIZINHOS`).
 
-Recebe uma lista de viagens e identifica automaticamente o formato de cada companhia pela estrutura do payload.
+O A* implementado **não reabre nós** (usa conjunto de fechados clássico).
+Isso é seguro para h1 e h2, que são consistentes; para h3 (não admissível),
+a busca não trava, mas pode devolver rota sub-ótima — é exatamente o que a
+Parte 3.3 do relatório discute.
 
-A resposta possui um formato padronizado, preservando a ordem dos elementos.
+## Mapa do repositório
 
-## Arquitetura
+| Arquivo | O que resolve |
+|---|---|
+| `src/gerador_pomar.py` | Gerador do pomar e dos parâmetros do sensor (intacto, não alterado) |
+| `src/buscas.py` | BFS, DFS, UCS e A* com os quatro contadores instrumentados |
+| `src/busca_local.py` | Subida de encosta e têmpera simulada para escolha de K talhões (Parte 3.4) |
+| `src/especialista.py` | Sistema especialista com encadeamento para trás (Parte 4.1/4.2) |
+| `src/bayes.py` | Cálculos bayesianos de confiabilidade do sensor (Parte 4.3) |
+| `src/bonus_dfs.py` | Contraexemplo construído (Liga de IA — bônus) |
+| `src/main.py` | Comando único: gera `pomar.txt`, `resultados.csv` e `grafico.png` |
+| `RELATORIO.md` | Relatório completo com todas as tabelas e discussões (Partes 1 a 5) |
+| `ANEXO_IA.md` | Anexo obrigatório de uso de IA (Parte 6) |
 
-O projeto utiliza:
+## Limitações conhecidas
 
-* **Adapter:** cada companhia possui seu próprio adaptador.
-* **Strategy:** cada adapter implementa a estratégia de identificação e normalização.
-* **Registry:** localiza automaticamente o adapter adequado.
-* **SOLID/OOP:** responsabilidades separadas, baixo acoplamento e uso de abstrações.
-
-Companhias suportadas:
-
-* Progresso
-* Rota Transportes
-* Gontijo
-* Sertão Bus
-
-A seleção das companhias não utiliza `if/elif` ou `match/case`.
-
-## Validações e erros
-
-São validados campos obrigatórios, datas, duração, preço, categoria, UF e quantidade de assentos.
-
-Dados inválidos retornam:
-
-```text
-HTTP 422
-```
-
-com informações sobre o índice, companhia, campo e mensagem de erro.
-
-Não são retornados resultados parciais.
-
-## Extensibilidade
-
-Para adicionar uma nova companhia:
-
-1. Criar um novo adapter em `app/adapters/`.
-2. Implementar `CompanyAdapter`.
-3. Implementar `can_handle()` e `normalize()`.
-4. Registrar o novo adapter no `IntegrationRegistry`.
-
-O fluxo principal da API não precisa ser alterado.
-
-## Testes
-
-Executar:
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q
-```
-
-Resultado atual:
-
-```text
-6 passed
-```
-
-Os testes verificam normalização, identificação de formatos, validações, erros e preservação da ordem.
-
-## Organização
-
-```text
-app/
-├── adapters/
-├── api/
-├── domain/
-├── factories/
-├── services/
-└── main.py
-
-examples/
-tests/
-requirements.txt
-README.md
-```
+- A busca local (Parte 3.4) usa uma função-objetivo definida pela dupla
+  (risco por tipo de terreno menos custo de deslocamento aproximado por
+  tour guloso) — não há "gabarito" único para essa modelagem; a escolha
+  está justificada em `RELATORIO.md`.
+- O teste de escalabilidade (Parte 2.4) foi feito neste ambiente de
+  desenvolvimento; o ponto de falha exato (n em que ocorre) pode variar
+  alguns milhares de talhões conforme a máquina usada na correção,
+  porque depende da memória RAM disponível.
