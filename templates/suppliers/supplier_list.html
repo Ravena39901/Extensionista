@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Suppliers{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-truck"></i> Suppliers</h1>
+        <div class="breadcrumb-custom">
+            <a href="{% url 'dashboard:index' %}">Home</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <span>Suppliers</span>
+        </div>
+    </div>
+    <a href="{% url 'suppliers:supplier_add' %}" class="btn-primary-custom"><i class="fas fa-plus"></i> Add Supplier</a>
+</div>
+
+<div class="data-card animate-scale-in">
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Supplier Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Products</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td style="color: var(--text-muted);">{{ forloop.counter }}</td>
+                    <td style="font-weight: 600; color: #fff;">{{ supplier.supplier_name }}</td>
+                    <td>{% if supplier.email %}<a href="mailto:{{ supplier.email }}"
+                            style="color: var(--primary-light);">{{ supplier.email }}</a>{% else %}&mdash;{% endif %}
+                    </td>
+                    <td>{% if supplier.phone %}{{ supplier.phone }}{% else %}&mdash;{% endif %}</td>
+                    <td><span class="badge-stock in-stock">{{ supplier.product_count }}</span></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'suppliers:supplier_edit' supplier.pk %}" class="btn-icon edit"
+                                title="Edit"><i class="fas fa-pen"></i></a>
+                            <a href="{% url 'suppliers:supplier_delete' supplier.pk %}" class="btn-icon delete"
+                                title="Delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="fas fa-truck"></i>
+                            <h5>No suppliers yet</h5>
+                            <p>Add your first supplier.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-pen-to-square"></i> Edit Product</h1>
+        <div class="breadcrumb-custom">
+            <a href="{% url 'dashboard:index' %}">Home</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <a href="{% url 'products:product_list' %}">Products</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <span>Edit</span>
+        </div>
+    </div>
+    <a href="{% url 'products:product_list' %}" class="btn-outline-custom"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="form-card animate-scale-in">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label">Product Name</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}<div class="text-danger mt-1" style="font-size: 0.8rem;">{{
+                            form.name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">SKU</label>
+                        {{ form.sku }}
+                        {% if form.sku.errors %}<div class="text-danger mt-1" style="font-size: 0.8rem;">{{
+                            form.sku.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Category</label>
+                        {{ form.category }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Supplier</label>
+                        {{ form.supplier }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Brand</label>
+                        {{ form.brand }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Size</label>
+                        {{ form.size }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Color</label>
+                        {{ form.color }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Price (₹)</label>
+                        {{ form.price }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Stock Quantity</label>
+                        {{ form.stock_quantity }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Product Image</label>
+                        {% if product.product_image %}
+                        <div class="mb-2">
+                            <img src="{{ product.product_image.url }}" alt="{{ product.name }}"
+                                style="max-height: 100px; border-radius: 8px;">
+                        </div>
+                        {% endif %}
+                        {{ form.product_image }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn-primary-custom"><i class="fas fa-save"></i> Update
+                            Product</button>
+                        <a href="{% url 'products:product_list' %}" class="btn-outline-custom ms-2">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

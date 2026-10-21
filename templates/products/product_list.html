@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-tshirt"></i> Products</h1>
+        <div class="breadcrumb-custom">
+            <a href="{% url 'dashboard:index' %}">Home</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <span>Products</span>
+        </div>
+    </div>
+    <a href="{% url 'products:product_add' %}" class="btn-primary-custom">
+        <i class="fas fa-plus"></i> Add Product
+    </a>
+</div>
+
+<form method="get" class="filter-bar">
+    <div class="d-flex align-items-center gap-2 flex-grow-1">
+        <i class="fas fa-search" style="color: var(--text-muted);"></i>
+        <input type="text" name="q" class="form-control" placeholder="Search by name, SKU, brand..." value="{{ query }}"
+            style="max-width: 300px;">
+    </div>
+    <select name="category" class="form-select" style="max-width: 180px;">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat.pk }}">{{ cat.category_name }}</option>
+        {% endfor %}
+    </select>
+    <select name="stock" class="form-select" style="max-width: 160px;">
+        <option value="">All Stock</option>
+        <option value="in">In Stock</option>
+        <option value="low">Low Stock</option>
+        <option value="out">Out of Stock</option>
+    </select>
+    <button type="submit" class="btn-primary-custom"><i class="fas fa-filter"></i> Filter</button>
+    {% if query or category_id or stock_status %}
+    <a href="{% url 'products:product_list' %}" class="btn-outline-custom"><i class="fas fa-times"></i> Clear</a>
+    {% endif %}
+</form>
+
+<div class="row g-4">
+    {% for product in products %}
+    <div class="col-xl-3 col-lg-4 col-md-6">
+        <div class="product-grid-card animate-slide-up">
+            {% if product.product_image %}
+            <img src="{{ product.product_image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+            <div class="product-image-placeholder">
+                <i class="fas fa-tshirt"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h6 class="product-name">{{ product.name|truncatechars:35 }}</h6>
+                <p class="product-sku">SKU: {{ product.sku }}</p>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="product-price">&#8377;{{ product.price }}</span>
+                    <span class="product-stock">
+                        {% if product.is_out_of_stock %}
+                        <span class="badge-stock out-of-stock"><i class="fas fa-circle" style="font-size: 0.4rem;"></i>
+                            Out of Stock</span>
+                        {% elif product.is_low_stock %}
+                        <span class="badge-stock low-stock"><i class="fas fa-circle" style="font-size: 0.4rem;"></i> Low
+                            ({{ product.stock_quantity }})</span>
+                        {% else %}
+                        <span class="badge-stock in-stock"><i class="fas fa-circle" style="font-size: 0.4rem;"></i> {{
+                            product.stock_quantity }}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% if product.category %}
+                <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fas fa-tag me-1"></i>{{
+                    product.category.category_name }}</span>
+                {% endif %}
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'products:product_detail' product.pk %}" class="btn-icon view" title="View"><i
+                        class="fas fa-eye"></i></a>
+                <a href="{% url 'products:product_edit' product.pk %}" class="btn-icon edit" title="Edit"><i
+                        class="fas fa-pen"></i></a>
+                <a href="{% url 'products:product_delete' product.pk %}" class="btn-icon delete" title="Delete"><i
+                        class="fas fa-trash"></i></a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h5>No products found</h5>
+            <p>Add your first product to get started.</p>
+            <a href="{% url 'products:product_add' %}" class="btn-primary-custom mt-3"><i class="fas fa-plus"></i> Add
+                Product</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if products.has_other_pages %}
+<nav class="pagination-custom">
+    {% if products.has_previous %}
+    <a class="page-link"
+        href="?page={{ products.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if stock_status %}&stock={{ stock_status }}{% endif %}">
+        <i class="fas fa-chevron-left"></i>
+    </a>
+    {% endif %}
+    {% for num in products.paginator.page_range %}
+    <span class="page-item {% if products.number == num %}active{% endif %}">
+        <a class="page-link"
+            href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if stock_status %}&stock={{ stock_status }}{% endif %}">{{
+            num }}</a>
+    </span>
+    {% endfor %}
+    {% if products.has_next %}
+    <a class="page-link"
+        href="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if stock_status %}&stock={{ stock_status }}{% endif %}">
+        <i class="fas fa-chevron-right"></i>
+    </a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

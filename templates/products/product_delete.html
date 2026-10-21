@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="delete-card animate-scale-in">
+    <i class="fas fa-triangle-exclamation"></i>
+    <h4>Delete Product</h4>
+    <p>Are you sure you want to delete <strong style="color: #fff;">"{{ product.name }}"</strong>? This action cannot be
+        undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger-custom me-2"><i class="fas fa-trash"></i> Yes, Delete</button>
+        <a href="{% url 'products:product_list' %}" class="btn-outline-custom">Cancel</a>
+    </form>
+</div>
+{% endblock %}

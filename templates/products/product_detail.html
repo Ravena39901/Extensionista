@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-eye"></i> Product Details</h1>
+        <div class="breadcrumb-custom">
+            <a href="{% url 'dashboard:index' %}">Home</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <a href="{% url 'products:product_list' %}">Products</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <span>{{ product.name|truncatechars:30 }}</span>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'products:product_edit' product.pk %}" class="btn-primary-custom"><i class="fas fa-pen"></i>
+            Edit</a>
+        <a href="{% url 'products:product_delete' product.pk %}" class="btn-danger-custom"><i class="fas fa-trash"></i>
+            Delete</a>
+        <a href="{% url 'products:product_list' %}" class="btn-outline-custom"><i class="fas fa-arrow-left"></i>
+            Back</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="detail-card animate-scale-in">
+            <div class="detail-body" style="padding: 1.5rem;">
+                {% if product.product_image %}
+                <img src="{{ product.product_image.url }}" alt="{{ product.name }}" class="product-detail-image mb-3">
+                {% else %}
+                <div class="product-detail-placeholder mb-3">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                {% endif %}
+                <h4 style="color: #fff; font-weight: 700;">{{ product.name }}</h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">SKU: {{ product.sku }}</p>
+                <h3 style="color: var(--accent); font-weight: 800;">₹{{ product.price }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="detail-card animate-slide-up stagger-2">
+            <div class="detail-header">
+                <h5 style="color: #fff; font-weight: 600;"><i class="fas fa-info-circle me-2"
+                        style="color: var(--primary-light);"></i>Product Information</h5>
+            </div>
+            <div class="detail-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Category</div>
+                            <div class="detail-value">{{ product.category.category_name|default:"—" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Brand</div>
+                            <div class="detail-value">{{ product.brand|default:"—" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Size</div>
+                            <div class="detail-value">{{ product.size|default:"—" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Color</div>
+                            <div class="detail-value">{{ product.color|default:"—" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Stock Quantity</div>
+                            <div class="detail-value">
+                                {% if product.is_out_of_stock %}
+                                <span class="badge-stock out-of-stock"><i class="fas fa-circle"
+                                        style="font-size: 0.4rem;"></i> Out of Stock</span>
+                                {% elif product.is_low_stock %}
+                                <span class="badge-stock low-stock"><i class="fas fa-circle"
+                                        style="font-size: 0.4rem;"></i> Low ({{ product.stock_quantity }})</span>
+                                {% else %}
+                                <span class="badge-stock in-stock"><i class="fas fa-circle"
+                                        style="font-size: 0.4rem;"></i> {{ product.stock_quantity }} units</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Supplier</div>
+                            <div class="detail-value">{{ product.supplier.supplier_name|default:"—" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="detail-item">
+                            <div class="detail-label">Description</div>
+                            <div class="detail-value">{{ product.description|default:"No description" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Created</div>
+                            <div class="detail-value">{{ product.created_at|date:"M d, Y h:i A" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-label">Last Updated</div>
+                            <div class="detail-value">{{ product.updated_at|date:"M d, Y h:i A" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock History for this product -->
+        {% if stock_logs %}
+        <div class="data-card animate-slide-up stagger-3 mt-4">
+            <div class="data-card-header">
+                <h5 class="data-card-title"><i class="fas fa-clock-rotate-left"></i> Stock History</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Quantity</th>
+                            <th>Notes</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in stock_logs %}
+                        <tr>
+                            <td>
+                                {% if log.change_type == 'IN' %}
+                                <span class="badge-stock-in"><i class="fas fa-arrow-up me-1"></i>Stock In</span>
+                                {% else %}
+                                <span class="badge-stock-out"><i class="fas fa-arrow-down me-1"></i>Stock Out</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-weight: 600;">{{ log.quantity }}</td>
+                            <td style="color: var(--text-muted);">{{ log.notes|default:"—" }}</td>
+                            <td style="color: var(--text-muted);">{{ log.created_at|date:"M d, Y h:i A" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

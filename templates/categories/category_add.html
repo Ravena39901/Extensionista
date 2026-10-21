@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Add Category{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-plus-circle"></i> Add Category</h1>
+        <div class="breadcrumb-custom">
+            <a href="{% url 'dashboard:index' %}">Home</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <a href="{% url 'categories:category_list' %}">Categories</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <span>Add</span>
+        </div>
+    </div>
+    <a href="{% url 'categories:category_list' %}" class="btn-outline-custom"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="form-card animate-scale-in">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Category Name</label>
+                    {{ form.category_name }}
+                    {% if form.category_name.errors %}<div class="text-danger mt-1" style="font-size: 0.8rem;">{{
+                        form.category_name.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+                <button type="submit" class="btn-success-custom"><i class="fas fa-check"></i> Save Category</button>
+                <a href="{% url 'categories:category_list' %}" class="btn-outline-custom ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

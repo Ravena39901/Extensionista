@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fashion Inventory{% endblock %} | Smart Fashion Manager</title>
+    <meta name="description" content="Smart Fashion Inventory Management System - Manage your fashion products, categories, suppliers and inventory.">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i class="fas fa-gem brand-icon"></i>
+                <span class="brand-text">Fashion<span class="text-accent">IMS</span></span>
+            </div>
+            <button class="sidebar-close d-lg-none" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">MAIN</div>
+            <a href="{% url 'dashboard:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' and request.resolver_match.namespace == 'dashboard' %}active{% endif %}" id="nav-dashboard">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'products:product_list' %}" class="nav-link {% if request.resolver_match.namespace == 'products' %}active{% endif %}" id="nav-products">
+                <i class="fas fa-tshirt"></i>
+                <span>Products</span>
+            </a>
+            <a href="{% url 'categories:category_list' %}" class="nav-link {% if request.resolver_match.namespace == 'categories' %}active{% endif %}" id="nav-categories">
+                <i class="fas fa-tags"></i>
+                <span>Categories</span>
+            </a>
+            <a href="{% url 'suppliers:supplier_list' %}" class="nav-link {% if request.resolver_match.namespace == 'suppliers' %}active{% endif %}" id="nav-suppliers">
+                <i class="fas fa-truck"></i>
+                <span>Suppliers</span>
+            </a>
+
+            <div class="nav-section-title">INVENTORY</div>
+            <a href="{% url 'inventory:inventory_list' %}" class="nav-link {% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}" id="nav-inventory">
+                <i class="fas fa-boxes-stacked"></i>
+                <span>Inventory</span>
+            </a>
+            <a href="{% url 'inventory:stock_adjust' %}" class="nav-link {% if request.resolver_match.url_name == 'stock_adjust' %}active{% endif %}" id="nav-stock-adjust">
+                <i class="fas fa-arrow-right-arrow-left"></i>
+                <span>Stock Adjust</span>
+            </a>
+            <a href="{% url 'inventory:stock_history' %}" class="nav-link {% if request.resolver_match.url_name == 'stock_history' %}active{% endif %}" id="nav-stock-history">
+                <i class="fas fa-clock-rotate-left"></i>
+                <span>Stock History</span>
+            </a>
+
+            <div class="nav-section-title">ANALYTICS</div>
+            <a href="{% url 'inventory:reports' %}" class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}" id="nav-reports">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="{% url 'inventory:settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" id="nav-settings">
+                <i class="fas fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name">Admin</span>
+                    <span class="user-role">Manager</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper" id="mainWrapper">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="navbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search products, categories..." id="globalSearch">
+                </div>
+            </div>
+            <div class="navbar-right">
+                <div class="navbar-item" id="notif-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notifBadge">3</span>
+                </div>
+                <div class="navbar-item">
+                    <i class="fas fa-expand" id="fullscreenBtn"></i>
+                </div>
+                <div class="profile-dropdown">
+                    <div class="profile-trigger" id="profileTrigger">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="profile-name">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-menu-custom" id="profileMenu">
+                        <a href="#" class="dropdown-item-custom">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="{% url 'inventory:settings' %}" class="dropdown-item-custom">
+                            <i class="fas fa-gear"></i> Settings
+                        </a>
+                        <hr>
+                        <a href="#" class="dropdown-item-custom text-danger">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <main class="content-area">
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show animate-slide-down" role="alert">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

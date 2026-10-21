@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-chart-pie"></i> Reports</h1>
+        <div class="breadcrumb-custom">
+            <a href="{% url 'dashboard:index' %}">Home</a>
+            <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+            <span>Reports</span>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-3 col-sm-6">
+        <div class="stat-card purple animate-slide-up stagger-1">
+            <div class="stat-card-body">
+                <div class="stat-info">
+                    <h3 class="animate-number">{{ total_products }}</h3>
+                    <p>Total Products</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-tshirt"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="stat-card green animate-slide-up stagger-2">
+            <div class="stat-card-body">
+                <div class="stat-info">
+                    <h3>₹{{ total_value|floatformat:0 }}</h3>
+                    <p>Total Stock Value</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="stat-card teal animate-slide-up stagger-3">
+            <div class="stat-card-body">
+                <div class="stat-info">
+                    <h3 class="animate-number">{{ total_stock_in }}</h3>
+                    <p>Total Items In</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="stat-card red animate-slide-up stagger-4">
+            <div class="stat-card-body">
+                <div class="stat-info">
+                    <h3 class="animate-number">{{ total_stock_out }}</h3>
+                    <p>Total Items Out</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Details -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-4 col-sm-6">
+        <div class="stat-card teal animate-slide-up stagger-2">
+            <div class="stat-card-body">
+                <div class="stat-info">
+                    <h3 class="animate-number">{{ total_categories }}</h3>
+                    <p>Categories</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-tags"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+        <div class="stat-card orange animate-slide-up stagger-3">
+            <div class="stat-card-body">
+                <div class="stat-info">
+                    <h3 class="animate-number">{{ low_stock }}</h3>
+                    <p>Low Stock Items</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+        <div class="stat-card blue animate-slide-up stagger-4">
+            <div class="stat-card-body">
+                <div class="stat-info">
+                    <h3 class="animate-number">{{ total_suppliers }}</h3>
+                    <p>Active Suppliers</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-truck"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="chart-card animate-scale-in stagger-5">
+            <div class="chart-card-header">
+                <h5 class="chart-card-title"><i class="fas fa-chart-pie"></i> Products by Category</h5>
+            </div>
+            <div style="height: 300px;">
+                <canvas id="reportCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="chart-card animate-scale-in stagger-6">
+            <div class="chart-card-header">
+                <h5 class="chart-card-title"><i class="fas fa-chart-pie"></i> Stock Distribution</h5>
+            </div>
+            <div style="height: 300px;">
+                <canvas id="reportStockChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
